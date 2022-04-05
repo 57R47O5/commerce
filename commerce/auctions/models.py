@@ -6,8 +6,11 @@ from django.forms import CharField, ImageField, IntegerField
 
 
 class User(AbstractUser):
+    username = models.CharField(max_length=64, unique=TRUE)
     nombre = models.CharField(max_length=64)
     apellido = models.CharField(max_length=64)
+    email = models.EmailField(blank=TRUE)
+    password = models.CharField(max_length=64)
     def __str__(self) -> str:
         return f"{self.nombre} {self.apellido}"
 
@@ -29,7 +32,7 @@ class Oferta(models.Model):
     oferente = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Oferta")  
     subasta = models.ForeignKey(Subasta, on_delete=models.CASCADE, related_name="Oferta")  
     precio = models.IntegerField
-    
+
 class Comentario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Comentario")  
     subasta = models.ForeignKey(Subasta, on_delete=models.CASCADE, related_name="Comentarios")  
