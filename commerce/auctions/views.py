@@ -1,3 +1,4 @@
+from tkinter import EW
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -68,26 +69,20 @@ def register(request):
 # Recibimos los datos que nos envía el form, y el id del usuario, creamos una nueva subasta y nos dirigimos a su página
 def dato_subasta(request, user_id):
     contexto = {"usuario_id":user_id}
-    if request.method == 'POST':  
-        subasta = forms.crear_subasta_form(request.POST)  
-        #subasta = forms.SubastaFormset(request.POST)       # Creamos una nueva instancia con los datos del form
-        tabla_subasta = Subasta.objects.create()
-        if subasta.is_valid():                          # Validamos los datos del form
-            tabla_subasta = subasta.cleaned_data  
-            datos_subasta = subasta.save()               # Creamos un nuevo objeto Subasta con los datos del form                 
-            datos_subasta.save() 
+    if request.method == "POST":
+        subasta = forms.SubastaForm(request.POST)
+        if subasta.is_valid():
+            tabla_subasta = subasta.cleaned_data
+            datos_subasta = subasta.save()
             contexto.update(tabla_subasta)
             return render(request, "auctions/subasta.html", contexto)
         else:
-            return render(request, "auctions/error.html")
+            return render(request, "auctions/error.html", contexto)
     else:
-        #subastan = Subasta.objects.create()                 # Creamos una instancia del objeto Subasta
-        #subastan.creador_subasta = User.objects.get(pk=user_id)     # Se guarda al usuario logeado como creador de la subasta
-        #subastan.save()                                     # Guardamos la instancia                
-        #SubastaFormset = formset_factory(forms.SubastaForm, fields=('nombre_producto', 'categoria_producto', 'imagen_producto', 'descripcion_producto', 'precio_inicial'))  
-        subasta = forms.crear_subasta_form()
-        contexto.update({"subasta":subasta})
+        subasta = forms.SubastaForm()
+        contexto.update({"subasta": subasta})
         return render(request, "auctions/subasta.html", contexto)
+ 
 
 
 def crear(request, user_id):
