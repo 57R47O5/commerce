@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html  lang="es">
+    <head>
+        <title>Subastas</title>
+    </head>
+    <body>
+        <div>
+            Subastas activas
+            <ul>
+                {% for  subasta in subastas %}
+                <li>{{datos_subasta}}</li>
+                {%endfor%}
+            </ul>
+        <div>
+            <form action="{% url 'datosubasta' usuario_id%}" method="post">
+                {{formset.management_data}}
+                {%csrf_token%}
+                {{subasta}}
+                <input type="submit">
+            </form>
+        </div>        
+    </body>
+</html>

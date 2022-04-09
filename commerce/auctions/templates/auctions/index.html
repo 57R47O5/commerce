@@ -1,7 +1,9 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+    <h2>Subastas activas</h2>
 
-    TODO
+    <h2>        
+        <a href="{% url 'datosubasta' user.id %}">Crear subasta</a>
+    </h2>    
 {% endblock %}

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>Crear Subasta</title>>
+    </head>
+    <body>
+        <form action="{% url 'subasta'  user.id %} " method="post">
+            {csrf_token}
+            <input type="submit">
+        </form>
+    </body>
+</html>
