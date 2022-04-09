@@ -23,5 +23,8 @@ class SubastaForm(ModelForm):
     class Meta:
         model = Subasta
         fields = ['creador_subasta', 'nombre_producto', 'categoria_producto', 'imagen_producto', 'descripcion_producto', 'precio_inicial']
-
+        widgets = {
+            'creador_subasta': HiddenInput,  
+            'descripcion_producto': forms.Textarea,          
+        }
 

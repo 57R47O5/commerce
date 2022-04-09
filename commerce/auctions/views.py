@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import *
-from . import forms
+from .forms import *
 from django.forms import formset_factory
 
 # Funciones
@@ -68,18 +68,18 @@ def register(request):
 
 # Recibimos los datos que nos envía el form, y el id del usuario, creamos una nueva subasta y nos dirigimos a su página
 def dato_subasta(request, user_id):
-    contexto = {"usuario_id":user_id}
+    contexto = {"usuario_id":user_id, "view":"dato_subasta"}
     if request.method == "POST":
-        subasta = forms.SubastaForm(request.POST)
-        if subasta.is_valid():
+        subasta = SubastaForm(request.POST)        
+        if subasta.is_valid():                     
             tabla_subasta = subasta.cleaned_data
-            datos_subasta = subasta.save()
+            datos = subasta.save()                             
             contexto.update(tabla_subasta)
-            return render(request, "auctions/subasta.html", contexto)
+            return render(request, "auctions/subasta.html", contexto)  
         else:
             return render(request, "auctions/error.html", contexto)
     else:
-        subasta = forms.SubastaForm()
+        subasta = SubastaForm(initial={'creador_subasta':user_id })                        
         contexto.update({"subasta": subasta})
         return render(request, "auctions/subasta.html", contexto)
  

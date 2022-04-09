@@ -2,8 +2,9 @@
 
 {% block body %}
     <h2>Subastas activas</h2>
-
+    {%if user.is_authenticated%}
     <h2>        
         <a href="{% url 'datosubasta' user.id %}">Crear subasta</a>
     </h2>    
+    {%endif%}
 {% endblock %}

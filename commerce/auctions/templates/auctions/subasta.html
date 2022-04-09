@@ -14,7 +14,7 @@
         <div>
             <form action="{% url 'datosubasta' usuario_id%}" method="post">                
                 {%csrf_token%}
-                {{subasta}}
+                {{subasta.as_p}}
                 <input type="submit">
             </form>
         </div>        
