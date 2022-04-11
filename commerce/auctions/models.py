@@ -27,16 +27,9 @@ class Subasta(models.Model):
     descripcion_producto = models.CharField(max_length=1024, null=TRUE)    
     precio_inicial = models.IntegerField(max_length=12, null=TRUE)
 
-    def crear_vacio(self):
-        creador_subasta = NULL
-        nombre_producto = NULL
-        categoria_producto = NULL
-        imagen_producto = NULL
-        descripcion_producto = NULL
-        precio_inicial = NULL
-        Subasta.save()
-
-    
+    def __str__(self) -> str:
+        return self.nombre_producto 
+        
 class Oferta(models.Model):
     oferente = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Oferta")  
     subasta = models.ForeignKey(Subasta, on_delete=models.CASCADE, related_name="Oferta")  
@@ -46,3 +39,7 @@ class Comentario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Comentario")  
     subasta = models.ForeignKey(Subasta, on_delete=models.CASCADE, related_name="Comentarios")  
     comentario = CharField(max_length=1024)
+
+class Watchlist(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Watchlist")
+    subasta = models.ManyToManyField(Subasta)

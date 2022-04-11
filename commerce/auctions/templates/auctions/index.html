@@ -1,10 +1,29 @@
 {% extends "auctions/layout.html" %}
 
-{% block body %}
-    <h2>Subastas activas</h2>
-    {%if user.is_authenticated%}
+{% block body %}      
+    <h2>Subastas activas</h2>  
+    {%for subasta in subastas%}
+    <ul>
+        <li>    
+            {{subasta.nombre_producto}} <br>
+            {{subasta.descripcion_producto}}<br>
+            {{subasta.precio_inicial}}<br>
+            {{subasta.imagen_producto}}<br>
+            {%if user.is_authenticated%}                
+                <form action="{% url 'agregar_watchlist' user.id %}" method="POST">
+                    {%csrf_token%}
+                    <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
+                    <input type="Submit" value="Agregar a Watchlist">
+                </form>
+            {%endif%}
+        </li>
+    </ul>
+    {%empty%}
+    No hay subastas activas
+    {%endfor%}
+    {%if user.is_authenticated%}    
     <h2>        
-        <a href="{% url 'datosubasta' user.id %}">Crear subasta</a>
+        <a href="{% url 'datosubasta' user.id %}">Crear subasta</a>        
     </h2>    
     {%endif%}
 {% endblock %}

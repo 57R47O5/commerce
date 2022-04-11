@@ -19,7 +19,7 @@ class crear_subasta_form(forms.Form):
     precio_inicial = forms.IntegerField(label="Precio", required=TRUE)    
     
 
-class SubastaForm(ModelForm):
+class SubastaForm(ModelForm):    
     class Meta:
         model = Subasta
         fields = ['creador_subasta', 'nombre_producto', 'categoria_producto', 'imagen_producto', 'descripcion_producto', 'precio_inicial']
@@ -27,4 +27,7 @@ class SubastaForm(ModelForm):
             'creador_subasta': HiddenInput,  
             'descripcion_producto': forms.Textarea,          
         }
+
+class WatchlistForm(forms.Form):
+    id_producto = forms.IntegerField(label="Producto", required=TRUE, widget=HiddenInput)
 

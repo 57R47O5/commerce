@@ -1,5 +1,6 @@
 from tkinter import EW
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -12,7 +13,11 @@ from django.forms import formset_factory
 # Funciones
 
 def index(request):
-    return render(request, "auctions/index.html")
+    Subastas = Subasta.objects.all()                                            # Creamos una lista de objetos Subasta    
+    contexto = {"subastas":Subastas}                                            # Añadimos al contexto    
+    form1 = WatchlistForm()
+    contexto.update({"form1":form1})
+    return render(request, "auctions/index.html", contexto)
 
 
 def login_view(request):
@@ -75,7 +80,9 @@ def dato_subasta(request, user_id):
             tabla_subasta = subasta.cleaned_data
             datos = subasta.save()                             
             contexto.update(tabla_subasta)
-            return render(request, "auctions/subasta.html", contexto)  
+            contexto.update({"subastas":Subasta.objects.all()})
+            #return render(request, "auctions/subasta.html", contexto)  
+            return index(request)
         else:
             return render(request, "auctions/error.html", contexto)
     else:
@@ -83,6 +90,15 @@ def dato_subasta(request, user_id):
         contexto.update({"subasta": subasta})
         return render(request, "auctions/subasta.html", contexto)
  
+@login_required
+def agregar_watchlist(request, user_id):
+    if request.method == "POST":
+        producto =  WatchlistForm(request.POST)
+        if producto.is_valid():
+            tabla_producto = producto.cleaned_data
+            w = Watchlist(usuario=user_id, subasta=tabla_producto)
+            w.save()
+    return index(request)
 
 
 def crear(request, user_id):
