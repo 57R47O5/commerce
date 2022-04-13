@@ -33,7 +33,7 @@ class Subasta(models.Model):
 class Oferta(models.Model):
     oferente = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Oferta")  
     subasta = models.ForeignKey(Subasta, on_delete=models.CASCADE, related_name="Oferta")  
-    precio = models.IntegerField
+    precio = models.IntegerField(null= TRUE, editable=TRUE)
 
 class Comentario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Comentario")  
@@ -42,4 +42,4 @@ class Comentario(models.Model):
 
 class Watchlist(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Watchlist")
-    subasta = models.ManyToManyField(Subasta)
+    subasta = models.ManyToManyField(Subasta, related_name = "SubastaWatchlist")

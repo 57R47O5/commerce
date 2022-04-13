@@ -1,0 +1,37 @@
+{% extends "auctions/layout.html" %}
+
+{%block body%}
+<h4>    
+    {{subasta.nombre_producto}}
+</h4>
+<h5>
+    {{subasta.descripcion_producto}}<br>
+    {{subasta.imagen_producto}}<br>
+    {{subasta.precio_inicial}}<br>    
+</h5>
+<div>
+{%if c > 0 %}                
+<form action="{% url 'eliminar_watchlist' user.id %}" method="POST">
+    {%csrf_token%}
+    <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
+    <input type="Submit" value="Eliminar de Watchlist">           
+{%else%}                
+    <form action="{% url 'agregar_watchlist' user.id %}" method="POST">
+    {%csrf_token%}
+    <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
+    <input type="Submit" value="Agregar a Watchlist">
+</form>
+{%endif%}
+</div>
+<div>
+    {% if user.is_authenticated %}
+    <form action="{% url 'pujar' subasta.id %}" method="POST">
+        <input type="Submit" value=Pujar>                    
+        {%csrf_token%}  
+        <input type="hidden" name="oferente" id="id_oferente" value={{user.id}}>
+        <input type="hidden" name="subasta" id="id_subasta" value={{subasta.id}}>
+        <input type="number" name="precio" id="id_precio" value={{subasta.precio_inicial}} min={{subasta.precio_inicial}}> 
+    </form><br>
+    {% endif %}
+</div>
+{%endblock%}

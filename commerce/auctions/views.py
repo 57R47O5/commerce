@@ -1,3 +1,4 @@
+import re
 from tkinter import EW
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -81,7 +82,6 @@ def dato_subasta(request, user_id):
             datos = subasta.save()                             
             contexto.update(tabla_subasta)
             contexto.update({"subastas":Subasta.objects.all()})
-            #return render(request, "auctions/subasta.html", contexto)  
             return index(request)
         else:
             return render(request, "auctions/error.html", contexto)
@@ -89,17 +89,67 @@ def dato_subasta(request, user_id):
         subasta = SubastaForm(initial={'creador_subasta':user_id })                        
         contexto.update({"subasta": subasta})
         return render(request, "auctions/subasta.html", contexto)
- 
+
 @login_required
 def agregar_watchlist(request, user_id):
     if request.method == "POST":
         producto =  WatchlistForm(request.POST)
         if producto.is_valid():
-            tabla_producto = producto.cleaned_data
-            w = Watchlist(usuario=user_id, subasta=tabla_producto)
+            tabla_producto = producto.cleaned_data                            
+            usuario = User.objects.get(pk=user_id)    # Objeto User 
+            subasta = Subasta.objects.get(pk=tabla_producto["id_producto"])     # Objeto Subasta
+            w = Watchlist(usuario=usuario)                           
+            #w = Watchlist()
             w.save()
+            w.subasta.add(subasta)
+            #w.subasta.add(usuario, subasta)
     return index(request)
 
+@login_required
+def eliminar_watchlist(request, user_id):
+    if request.method == "POST":
+        producto =  WatchlistForm(request.POST)
+        if producto.is_valid():
+            tabla_producto = producto.cleaned_data   
+            usuario = User.objects.get(pk=user_id)
+            subasta = Subasta.objects.get(pk=tabla_producto["id_producto"])                 
+            w = Watchlist.objects.get(usuario=user_id, subasta=subasta)         
+            w.delete()
+    return index(request)
+
+def ver_subasta(request, subasta_id):
+    subasta = Subasta.objects.get(pk=subasta_id)                                              
+    contexto = {"subasta":subasta}    
+    contexto.update({"OfertaForm":OfertaForm()})
+    if request.method == "POST":
+        usuario = UserForm(request.POST)
+        if usuario.is_valid():
+            id_usuario = usuario.cleaned_data["id_usuario"]           
+            s = Watchlist.objects.filter(usuario = id_usuario, subasta=subasta_id)  # s tiene un elemento si la subasta está en el watchlist del usuario            
+            c = s.count()                                  # Debemos agregar un objeto al watchlist para seguir trabajando acá
+            contexto.update({"c":c})
+            return render(request, "auctions/ver_subasta.html", contexto)
+        else:
+            return render(request, "auctions/error.html", contexto)
+    else:
+        return render(request, "auctions/ver_subasta.html", contexto)
+        
+
+@login_required
+def pujar(request, subasta_id):
+    subasta = Subasta.objects.get(pk=subasta_id)                                              
+    contexto = {"subasta":subasta}
+    contexto.update({"view":"pujar"})
+    if request.method == "POST":
+        oferta = OfertaForm(request.POST)
+        if oferta.is_valid():
+        #    datos = oferta.cleaned_data            # Tiene el formato del modelo Oferta (oferente, subasta, precio)
+        #    PrecioOferta = datos["precio"]
+        #    Oferente = datos["oferente"]
+            #subasta = Subasta.objects.get(pk=datos["id_producto"])
+            return index(request)
+        else:
+            return render(request, "auctions/error.html", contexto)
 
 def crear(request, user_id):
     if request.method == 'POST':

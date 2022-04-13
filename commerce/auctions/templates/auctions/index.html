@@ -4,17 +4,25 @@
     <h2>Subastas activas</h2>  
     {%for subasta in subastas%}
     <ul>
-        <li>    
-            {{subasta.nombre_producto}} <br>
-            {{subasta.descripcion_producto}}<br>
-            {{subasta.precio_inicial}}<br>
-            {{subasta.imagen_producto}}<br>
-            {%if user.is_authenticated%}                
-                <form action="{% url 'agregar_watchlist' user.id %}" method="POST">
+        <li> 
+            {%if user.is_authenticated%}
+            <div>  
+                <form action="{% url 'ver_subasta' subasta.id %}" method="POST">
+                    <input type="Submit" value={{subasta.nombre_producto}}>                    
                     {%csrf_token%}
-                    <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
-                    <input type="Submit" value="Agregar a Watchlist">
-                </form>
+                    <input type="hidden" name="id_usuario" id="id_id_usuario" value={{user.id}}>                                      
+                </form><br>
+                {{subasta.descripcion_producto}}<br>
+                {{subasta.imagen_producto}}<br>  
+                {{subasta.precio_inicial}}<br>           
+                </div>
+            {%else%}
+            <div>  
+            <a href="{% url 'ver_subasta' subasta.id %}">{{subasta.nombre_producto}}</a><br>
+            {{subasta.descripcion_producto}}<br>
+            {{subasta.imagen_producto}}<br>  
+            {{subasta.precio_inicial}}<br>           
+            </div> 
             {%endif%}
         </li>
     </ul>

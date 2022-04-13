@@ -2,9 +2,9 @@ from cProfile import label
 from pickle import TRUE
 from pyexpat import model
 from django import forms
-from django.forms import HiddenInput, ModelForm
+from django.forms import HiddenInput, IntegerField, ModelForm
 
-from . models import Subasta
+from . models import Oferta, Subasta
 
 # En este archivo definimos los formularios a ser utilizados en view
 
@@ -28,6 +28,18 @@ class SubastaForm(ModelForm):
             'descripcion_producto': forms.Textarea,          
         }
 
+class OfertaForm(ModelForm):
+    class Meta:
+        model = Oferta
+        fields = ['oferente','subasta','precio']
+        widgets = {
+            'oferente': HiddenInput,
+            'subasta': HiddenInput,              
+        }
+
 class WatchlistForm(forms.Form):
     id_producto = forms.IntegerField(label="Producto", required=TRUE, widget=HiddenInput)
+
+class UserForm(forms.Form):
+    id_usuario = forms.IntegerField(required=TRUE)
 
