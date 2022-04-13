@@ -98,11 +98,9 @@ def agregar_watchlist(request, user_id):
             tabla_producto = producto.cleaned_data                            
             usuario = User.objects.get(pk=user_id)    # Objeto User 
             subasta = Subasta.objects.get(pk=tabla_producto["id_producto"])     # Objeto Subasta
-            w = Watchlist(usuario=usuario)                           
-            #w = Watchlist()
+            w = Watchlist(usuario=usuario)                     
             w.save()
             w.subasta.add(subasta)
-            #w.subasta.add(usuario, subasta)
     return index(request)
 
 @login_required
@@ -140,14 +138,22 @@ def pujar(request, subasta_id):
     subasta = Subasta.objects.get(pk=subasta_id)                                              
     contexto = {"subasta":subasta}
     contexto.update({"view":"pujar"})
+    contexto.update({"erroruser":0, "errorprecio":0})
     if request.method == "POST":
         oferta = OfertaForm(request.POST)
         if oferta.is_valid():
-        #    datos = oferta.cleaned_data            # Tiene el formato del modelo Oferta (oferente, subasta, precio)
-        #    PrecioOferta = datos["precio"]
-        #    Oferente = datos["oferente"]
-            #subasta = Subasta.objects.get(pk=datos["id_producto"])
-            return index(request)
+            datos = oferta.cleaned_data            # Tiene el formato del modelo Oferta (oferente, subasta, precio)
+            PrecioOferta = datos["precio"]
+            Oferente = datos["oferente"]
+            subasta = Subasta.objects.get(pk=subasta_id)
+            if Oferente != subasta.creador_subasta:
+                if PrecioOferta > subasta.precio_inicial:
+                    subasta.precio_inicial = PrecioOferta
+                    subasta.save()
+                return index(request)
+            else:
+                contexto.update({"erroruser":1})      
+                return render(request, "auctions/erroruser.html")                                                                 
         else:
             return render(request, "auctions/error.html", contexto)
 
