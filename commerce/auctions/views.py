@@ -1,3 +1,4 @@
+from pickle import FALSE
 import re
 from tkinter import EW
 from django.contrib.auth import authenticate, login, logout
@@ -13,13 +14,17 @@ from django.forms import formset_factory
 
 # Funciones
 
-def index(request):
-    Subastas = Subasta.objects.all()                                            # Creamos una lista de objetos Subasta    
+def index(request):    
+    Subastas = Subasta.objects.filter(estatus=True)                             # Subastas abiertas
     contexto = {"subastas":Subastas}                                            # Añadimos al contexto    
     form1 = WatchlistForm()
     contexto.update({"form1":form1})
     return render(request, "auctions/index.html", contexto)
 
+def cerradas(request):    
+    Subastas = Subasta.objects.filter(estatus=False)                             # Subastas abiertas
+    contexto = {"subastas":Subastas}                                            # Añadimos al contexto        
+    return render(request, "auctions/cerradas.html", contexto)
 
 def login_view(request):
     if request.method == "POST":
@@ -75,18 +80,21 @@ def register(request):
 # Recibimos los datos que nos envía el form, y el id del usuario, creamos una nueva subasta y nos dirigimos a su página
 def dato_subasta(request, user_id):
     contexto = {"usuario_id":user_id, "view":"dato_subasta"}
+    user = User.objects.get(pk=user_id)
     if request.method == "POST":
         subasta = SubastaForm(request.POST)        
         if subasta.is_valid():                     
-            tabla_subasta = subasta.cleaned_data            
-            subasta.save()                             
+            tabla_subasta = subasta.cleaned_data
+            subasta.save()                
+            subasta.ultimo_oferente = user  # Será que se puede asignar tan alegremente un objeto del lado derecho?
+            subasta.save()                        
             contexto.update(tabla_subasta)
             contexto.update({"subastas":Subasta.objects.all()})
             return index(request)
         else:
             return render(request, "auctions/error.html", contexto)
     else:
-        subasta = SubastaForm(initial={'creador_subasta':user_id })                        
+        subasta = SubastaForm(initial={'creador_subasta':user_id, 'estatus':TRUE })                        
         contexto.update({"subasta": subasta})
         return render(request, "auctions/subasta.html", contexto)
 
@@ -128,12 +136,12 @@ def ver_subasta(request, subasta_id):
             s = Watchlist.objects.filter(usuario = id_usuario, subasta=subasta_id)  # s tiene un elemento si la subasta está en el watchlist del usuario            
             c = s.count()                                  # Debemos agregar un objeto al watchlist para seguir trabajando acá
             contexto.update({"c":c})
+            # Aca debemos trabajar con los comentarios
             return render(request, "auctions/ver_subasta.html", contexto)
         else:
             return render(request, "auctions/error.html", contexto)
     else:
         return render(request, "auctions/ver_subasta.html", contexto)
-        
 
 @login_required
 def pujar(request, subasta_id):
@@ -162,9 +170,10 @@ def pujar(request, subasta_id):
 
 @login_required
 def cerrar(request, subasta_id):
-    subasta = Subasta.objects.get(pk=subasta_id)                                              
-    contexto = {"subasta":subasta}
-    contexto.update({"cerrada":1})
+    subasta = Subasta.objects.get(pk=subasta_id) 
+    subasta.estatus = False  
+    subasta.save()                                           
+    contexto = {"subasta":subasta}    
     return render(request, "auctions/ver_subasta.html",contexto)
 
 def crear(request, user_id):
@@ -176,3 +185,15 @@ def crear(request, user_id):
             return render(request, "auctions/subasta.html", context)
     else:
         return render(request, "auctions/error.html", context)
+
+@login_required
+def comentar(request, subasta_id):
+    if request.method == "POST":
+        comentario = ComentarioForm(request.POST)
+        if comentario.is_valid:
+            comentario.save()
+            contexto = {"comentario":comentario}
+            return render(request, "auctions/comentar.html", contexto)            
+    else:
+        comentario = ComentarioForm(initial={"usuario":user_id})
+    return render(request, "auctions/comentar.html")
