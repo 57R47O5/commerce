@@ -8,13 +8,9 @@ from django.forms import CharField, ImageField, IntegerField
 
 
 class User(AbstractUser):
-    username = models.CharField(max_length=64, unique=TRUE)
-    nombre = models.CharField(max_length=64)
-    apellido = models.CharField(max_length=64)
+    username = models.CharField(max_length=64, unique=TRUE)    
     email = models.EmailField(blank=TRUE)
-    password = models.CharField(max_length=64)
-    def __str__(self) -> str:
-        return f"{self.nombre} {self.apellido}"
+    password = models.CharField(max_length=64)    
 
 class Categoria(models.Model):
     nombre_categoria = models.CharField(max_length=64)
@@ -27,7 +23,7 @@ class Subasta(models.Model):
     descripcion_producto = models.CharField(max_length=1024, null=TRUE)    
     precio_inicial = models.IntegerField(max_length=12, null=TRUE)
     ultimo_oferente =  models.ForeignKey(User, on_delete=models.SET_NULL, null=TRUE)
-    #estatus = models.BooleanField()
+    estatus = models.BooleanField()
 
     def __str__(self) -> str:
         return self.nombre_producto 

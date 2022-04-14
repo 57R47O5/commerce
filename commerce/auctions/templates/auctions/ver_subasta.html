@@ -10,19 +10,23 @@
     {{subasta.precio_inicial}}<br>    
 </h5>
 <div>
-{%if c > 0 %}                
-<form action="{% url 'eliminar_watchlist' user.id %}" method="POST">
-    {%csrf_token%}
-    <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
-    <input type="Submit" value="Eliminar de Watchlist">           
-{%else%}                
-    <form action="{% url 'agregar_watchlist' user.id %}" method="POST">
-    {%csrf_token%}
-    <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
-    <input type="Submit" value="Agregar a Watchlist">
-</form>
+{# Si el usuario está autenticado, puede agregar o eliminar el producto de la watchlist#}
+{% if user.is_authenticated %}
+    {%if c > 0 %}                
+        <form action="{% url 'eliminar_watchlist' user.id %}" method="POST">
+        {%csrf_token%}
+        <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
+        <input type="Submit" value="Eliminar de Watchlist">           
+    {%else%}                
+        <form action="{% url 'agregar_watchlist' user.id %}" method="POST">
+        {%csrf_token%}
+        <input type="hidden" name="id_producto" id="id_id_producto" value={{subasta.id}}>
+        <input type="Submit" value="Agregar a Watchlist">
+    </form>
+    {%endif%}
 {%endif%}
 </div>
+{# Si el usuario está autenticado, puede pujar #}
 <div>
     {% if user.is_authenticated %}
     <form action="{% url 'pujar' subasta.id %}" method="POST">
@@ -35,6 +39,7 @@
     {% endif %}
 </div>
 <div>
+    {# Si el usuario es el creador, puede cerrar la subasta#}
     {% if user.is_authenticated %}    
         {% if user.id == id_creador %}
         <form action="{% url 'cerrar' subasta.id %}" method="POST">
@@ -42,9 +47,19 @@
             {%csrf_token%}  
             <input type="hidden" name="creador" id="id_creador" value={{user.id}}>            
         </form><br>
-        {%endif%}
-    {# Si el user es el creador de subasta, debe poder cerrar #}
-    {# Vamos a tener que modifiar el model Subasta, para agregar al que puso el valor mas alto#}
+        {%endif%}    
+    {% endif %}
+</div>
+<div>
+    {#Si el usuario está autenticado, puede comentar#}
+    {%if user.is_authenticated%}
+    <h3>
+        <form action="{% url 'comentar' subasta.id %}" method="POST">
+            <input type="Submit" value=Comentar>                    
+            {%csrf_token%}  
+            <input type="hidden" name="usuario" id="id_usuario" value={{user.id}}>            
+        </form><br>
+    </h3>
     {% endif %}
 </div>
 <div>
@@ -53,3 +68,11 @@
     {%endblock%}
 </div>
 {%endblock%}
+<div>
+    {%block comentar%}
+    {%endblock %}
+</div>
+<div>
+    {%block comentario%}
+    {%endblock %}
+</div>

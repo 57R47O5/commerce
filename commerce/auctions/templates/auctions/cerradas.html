@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}      
+    <h2>Subastas terminadas</h2>  
+    {%for subasta in subastas%}
+    <ul>
+        <li>           
+            <div>  
+            <a href="{% url 'ver_subasta' subasta.id %}">{{subasta.nombre_producto}}</a><br>
+            {{subasta.descripcion_producto}}<br>
+            {{subasta.imagen_producto}}<br>  
+            {{subasta.precio_inicial}}<br>                      
+            </div>             
+        </li>
+        {%if user.is_authenticated%}    
+            {% if user.id == subasta.ultimo_oferente.id %} 
+                <h4>Felicidades! Usted ha adquirido el producto </h4>
+            {%endif%}
+        {% endif %}        
+    </ul>
+    {%empty%}
+    No hay subastas inactivas    
+    {%endfor%}
+    {%if user.is_authenticated%}     
+        {% if user.id == subasta.ultimo_oferente.id %} 
+        <h3>Felicidades! Usted ha adquirido el producto </h3>
+    {% endif %}
+    <h2>        
+        <a href="{% url 'datosubasta' user.id %}">Crear subasta</a>        
+    </h2>    
+    {%endif%}
+{% endblock %}

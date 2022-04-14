@@ -4,7 +4,7 @@ from pyexpat import model
 from django import forms
 from django.forms import HiddenInput, IntegerField, ModelForm
 
-from . models import Oferta, Subasta
+from . models import Oferta, Subasta, Comentario
 
 # En este archivo definimos los formularios a ser utilizados en view
 
@@ -22,10 +22,11 @@ class crear_subasta_form(forms.Form):
 class SubastaForm(ModelForm):    
     class Meta:
         model = Subasta
-        fields = ['creador_subasta', 'nombre_producto', 'categoria_producto', 'imagen_producto', 'descripcion_producto', 'precio_inicial']
-        widgets = {
-            'creador_subasta': HiddenInput,  
-            'descripcion_producto': forms.Textarea,          
+        fields = ['creador_subasta', 'nombre_producto', 'categoria_producto', 'imagen_producto', 'descripcion_producto', 'precio_inicial','estatus']
+        widgets = {              
+            'ultimo_oferente': HiddenInput,
+            'descripcion_producto': forms.Textarea,   
+            'estatus': HiddenInput,
         }
 
 class OfertaForm(ModelForm):
@@ -42,4 +43,14 @@ class WatchlistForm(forms.Form):
 
 class UserForm(forms.Form):
     id_usuario = forms.IntegerField(required=TRUE)
+
+class ComentarioForm(forms.Form):
+    class Meta:
+        model = Comentario
+        fields = ['usuario', 'subasta', 'comentario']
+        widgets = {
+            'usuario': HiddenInput,
+            "subasta": HiddenInput,
+            'comentario': forms.Textarea
+        }
 
