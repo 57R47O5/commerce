@@ -124,24 +124,15 @@ def eliminar_watchlist(request, user_id):
     return index(request)
 
 def ver_subasta(request, subasta_id):
-    subasta = Subasta.objects.get(pk=subasta_id)  
-    id_creador = subasta.creador_subasta.pk                                           
-    contexto = {"subasta":subasta, "id_creador":id_creador}    
-    contexto.update({"cerrada":0})
-    contexto.update({"OfertaForm":OfertaForm()})
-    if request.method == "POST":
-        usuario = UserForm(request.POST)
-        if usuario.is_valid():
-            id_usuario = usuario.cleaned_data["id_usuario"]           
-            s = Watchlist.objects.filter(usuario = id_usuario, subasta=subasta_id)  # s tiene un elemento si la subasta está en el watchlist del usuario            
-            c = s.count()                                  # Debemos agregar un objeto al watchlist para seguir trabajando acá
-            contexto.update({"c":c})
-            # Aca debemos trabajar con los comentarios
-            return render(request, "auctions/ver_subasta.html", contexto)
-        else:
-            return render(request, "auctions/error.html", contexto)
-    else:
-        return render(request, "auctions/ver_subasta.html", contexto)
+    subasta = Subasta.objects.get(pk=subasta_id)    # Buscamos la subasta
+    id_creador = subasta.creador_subasta            # Tenemos al creador
+    id_usuario = request.user.pk                    # Usuario actual 
+    contexto = {"subasta":subasta, "id_usuario":id_usuario, "id_creador":id_creador}        
+    s = Watchlist.objects.filter(usuario = id_usuario, subasta=subasta_id)
+    c = s.count()                                  
+    contexto.update({"c":c})
+    return render(request, "auctions/ver_subasta.html", contexto)   
+
 
 @login_required
 def pujar(request, subasta_id):
