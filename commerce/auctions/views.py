@@ -78,8 +78,8 @@ def dato_subasta(request, user_id):
     if request.method == "POST":
         subasta = SubastaForm(request.POST)        
         if subasta.is_valid():                     
-            tabla_subasta = subasta.cleaned_data
-            datos = subasta.save()                             
+            tabla_subasta = subasta.cleaned_data            
+            subasta.save()                             
             contexto.update(tabla_subasta)
             contexto.update({"subastas":Subasta.objects.all()})
             return index(request)
@@ -116,8 +116,10 @@ def eliminar_watchlist(request, user_id):
     return index(request)
 
 def ver_subasta(request, subasta_id):
-    subasta = Subasta.objects.get(pk=subasta_id)                                              
-    contexto = {"subasta":subasta}    
+    subasta = Subasta.objects.get(pk=subasta_id)  
+    id_creador = subasta.creador_subasta.pk                                           
+    contexto = {"subasta":subasta, "id_creador":id_creador}    
+    contexto.update({"cerrada":0})
     contexto.update({"OfertaForm":OfertaForm()})
     if request.method == "POST":
         usuario = UserForm(request.POST)
@@ -137,8 +139,7 @@ def ver_subasta(request, subasta_id):
 def pujar(request, subasta_id):
     subasta = Subasta.objects.get(pk=subasta_id)                                              
     contexto = {"subasta":subasta}
-    contexto.update({"view":"pujar"})
-    contexto.update({"erroruser":0, "errorprecio":0})
+    contexto.update({"view":"pujar"})    
     if request.method == "POST":
         oferta = OfertaForm(request.POST)
         if oferta.is_valid():
@@ -149,13 +150,22 @@ def pujar(request, subasta_id):
             if Oferente != subasta.creador_subasta:
                 if PrecioOferta > subasta.precio_inicial:
                     subasta.precio_inicial = PrecioOferta
+                    subasta.ultimo_oferente = Oferente
                     subasta.save()
-                return index(request)
-            else:
-                contexto.update({"erroruser":1})      
+                    return index(request)
+                else:
+                    return render(request, "auctions/errorpuja.html")
+            else:                
                 return render(request, "auctions/erroruser.html")                                                                 
         else:
             return render(request, "auctions/error.html", contexto)
+
+@login_required
+def cerrar(request, subasta_id):
+    subasta = Subasta.objects.get(pk=subasta_id)                                              
+    contexto = {"subasta":subasta}
+    contexto.update({"cerrada":1})
+    return render(request, "auctions/ver_subasta.html",contexto)
 
 def crear(request, user_id):
     if request.method == 'POST':
