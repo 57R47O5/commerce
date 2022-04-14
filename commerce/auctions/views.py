@@ -176,18 +176,10 @@ def cerrar(request, subasta_id):
     contexto = {"subasta":subasta}    
     return render(request, "auctions/ver_subasta.html",contexto)
 
-def crear(request, user_id):
-    if request.method == 'POST':
-        subasta = forms.crear_subasta_form
-        if subasta.is_valid():
-            datos_subasta = subasta.cleaned_data
-            context = datos_subasta
-            return render(request, "auctions/subasta.html", context)
-    else:
-        return render(request, "auctions/error.html", context)
-
 @login_required
 def comentar(request, subasta_id):
+    #esto tenemos que corregir
+    user_id = 1
     if request.method == "POST":
         comentario = ComentarioForm(request.POST)
         if comentario.is_valid:
