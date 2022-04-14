@@ -13,5 +13,6 @@ urlpatterns = [
     path("<int:user_id>/eliminar_watchlist", views.eliminar_watchlist, name="eliminar_watchlist"),
     path("<int:subasta_id>/ver_subasta", views.ver_subasta, name="ver_subasta"),
     path("<int:subasta_id>/pujar", views.pujar, name="pujar"),
+    path("<int:subasta_id>/cerrar", views.cerrar, name="cerrar"),
     path("<int:user_id>/crear", views.crear, name="crear")
 ]

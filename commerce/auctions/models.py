@@ -26,6 +26,8 @@ class Subasta(models.Model):
     imagen_producto = models.ImageField(blank = TRUE, null=TRUE)
     descripcion_producto = models.CharField(max_length=1024, null=TRUE)    
     precio_inicial = models.IntegerField(max_length=12, null=TRUE)
+    ultimo_oferente =  models.ForeignKey(User, on_delete=models.SET_NULL, null=TRUE)
+    #estatus = models.BooleanField()
 
     def __str__(self) -> str:
         return self.nombre_producto 

@@ -35,6 +35,19 @@
     {% endif %}
 </div>
 <div>
+    {% if user.is_authenticated %}    
+        {% if user.id == id_creador %}
+        <form action="{% url 'cerrar' subasta.id %}" method="POST">
+            <input type="Submit" value=Cerrar>                    
+            {%csrf_token%}  
+            <input type="hidden" name="creador" id="id_creador" value={{user.id}}>            
+        </form><br>
+        {%endif%}
+    {# Si el user es el creador de subasta, debe poder cerrar #}
+    {# Vamos a tener que modifiar el model Subasta, para agregar al que puso el valor mas alto#}
+    {% endif %}
+</div>
+<div>
     {%block erroruser%}
     
     {%endblock%}
