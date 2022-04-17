@@ -36,7 +36,7 @@ class Oferta(models.Model):
 class Comentario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Comentario")  
     subasta = models.ForeignKey(Subasta, on_delete=models.CASCADE, related_name="Comentarios")  
-    comentario = CharField(max_length=1024)
+    comentario = models.CharField(max_length=1024, editable=TRUE)
 
 class Watchlist(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Watchlist")

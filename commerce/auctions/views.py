@@ -131,6 +131,8 @@ def ver_subasta(request, subasta_id):
     s = Watchlist.objects.filter(usuario = id_usuario, subasta=subasta_id)
     c = s.count()                                  
     contexto.update({"c":c})
+    comentario = ComentarioForm(initial={"usuario":id_usuario, "subasta":subasta_id})
+    contexto.update({"comentario":comentario})
     return render(request, "auctions/ver_subasta.html", contexto)   
 
 
@@ -169,14 +171,13 @@ def cerrar(request, subasta_id):
 
 @login_required
 def comentar(request, subasta_id):
-    #esto tenemos que corregir
-    user_id = 1
+    user_id = request.user.pk
     if request.method == "POST":
         comentario = ComentarioForm(request.POST)
         if comentario.is_valid:
             comentario.save()
             contexto = {"comentario":comentario}
-            return render(request, "auctions/comentar.html", contexto)            
+            return index(request)            
     else:
         comentario = ComentarioForm(initial={"usuario":user_id})
-    return render(request, "auctions/comentar.html")
+    return index(request)

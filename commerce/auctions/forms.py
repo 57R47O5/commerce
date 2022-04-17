@@ -44,13 +44,13 @@ class WatchlistForm(forms.Form):
 class UserForm(forms.Form):
     id_usuario = forms.IntegerField(required=TRUE)
 
-class ComentarioForm(forms.Form):
+class ComentarioForm(ModelForm):
     class Meta:
         model = Comentario
-        fields = ['usuario', 'subasta', 'comentario']
+        fields = ['usuario','subasta','comentario']
         widgets = {
             'usuario': HiddenInput,
             "subasta": HiddenInput,
-            'comentario': forms.Textarea
+            'comentario': forms.Textarea,
         }
 

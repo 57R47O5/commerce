@@ -27,16 +27,16 @@
 {%endif%}
 </div>
 {# Si el usuario está autenticado, puede pujar #}
-<div>
+<div>    
     {% if user.is_authenticated %}
-    <form action="{% url 'pujar' subasta.id %}" method="POST">
-        <input type="Submit" value=Pujar>                    
+    <form action="{% url 'pujar' subasta.id %}" method="POST">        
         {%csrf_token%}  
         <input type="hidden" name="oferente" id="id_oferente" value={{user.id}}>
         <input type="hidden" name="subasta" id="id_subasta" value={{subasta.id}}>
         <input type="number" name="precio" id="id_precio" value={{subasta.precio_inicial}} min={{subasta.precio_inicial}}> 
+        <input type="Submit" value=Pujar>                    
     </form><br>
-    {% endif %}
+    {% endif %}    
 </div>
 <div>
     {# Si el usuario es el creador, puede cerrar la subasta#}
@@ -51,16 +51,14 @@
     {% endif %}
 </div>
 <div>
-    {#Si el usuario está autenticado, puede comentar#}
-    {%if user.is_authenticated%}
-    <h3>
-        <form action="{% url 'comentar' subasta.id %}" method="POST">
-            <input type="Submit" value=Comentar>                    
-            {%csrf_token%}  
-            <input type="hidden" name="usuario" id="id_usuario" value={{user.id}}>            
-        </form><br>
-    </h3>
-    {% endif %}
+    {#Si el usuario está autenticado, puede comentar#}    
+        {%if user.is_authenticated%}    
+        <form action="{% url 'comentar' subasta.id %}" method="POST">                                
+        {%csrf_token%}  
+        {{comentario.as_p}}       
+        <input type="Submit" value="Publicar comentario">                       
+    </form><br>    
+    {% endif %}    
 </div>
 <div>
     {%block erroruser%}
