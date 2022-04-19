@@ -87,7 +87,7 @@ def dato_subasta(request, user_id):
     contexto = {"usuario_id":user_id, "view":"dato_subasta"}
     user = User.objects.get(pk=user_id)
     if request.method == "POST":
-        subasta = SubastaForm(request.POST, request.FILES)        
+        subasta = SubastaForm(request.POST, request.FILES)    # Aparentemente llega la imagen, pero no guarda    
         if subasta.is_valid():                     
             tabla_subasta = subasta.cleaned_data
             subasta.save()                
@@ -138,9 +138,9 @@ def eliminar_watchlist(request, user_id):
 
 def ver_subasta(request, subasta_id):
     subasta = Subasta.objects.get(pk=subasta_id)    # Buscamos la subasta
-    id_creador = subasta.creador_subasta            # Tenemos al creador
+    creador = subasta.creador_subasta            # Tenemos al creador
     id_usuario = request.user.pk                    # Usuario actual 
-    contexto = {"subasta":subasta, "id_usuario":id_usuario, "id_creador":id_creador}        
+    contexto = {"subasta":subasta, "id_usuario":id_usuario, "creador":creador}        
     s = Watchlist.objects.filter(usuario = id_usuario, subasta=subasta_id)
     c = s.count()                                  
     contexto.update({"c":c})

@@ -1,5 +1,7 @@
 from unicodedata import name
+from django.conf import settings
 from django.urls import path
+from django.conf.urls.static import static
 
 from . import views
 
@@ -19,4 +21,4 @@ urlpatterns = [
     path("<int:subasta_id>/comentar", views.comentar, name="comentar"),    
     path("<int:subasta_id>/cerrar", views.cerrar, name="cerrar"),
     path("<int:categoria_id>/categoria", views.categoria, name="categoria")    
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -6,7 +6,7 @@
 </h4>
 <h5>
     {{subasta.descripcion_producto}}<br>
-    {{subasta.imagen_producto}}<br>
+    <img src="/media/{{subasta.imagen_producto}}" alt="{{subasta.nombre_producto}}" ><br><br>
     {{subasta.precio_inicial}}<br>    
 </h5>
 <div>
@@ -40,8 +40,8 @@
 </div>
 <div>
     {# Si el usuario es el creador, puede cerrar la subasta#}
-    {% if user.is_authenticated %}    
-        {% if user.id == id_creador %}
+    {% if user.is_authenticated %}        
+        {% if user.id == creador.id %}
         <form action="{% url 'cerrar' subasta.id %}" method="POST">
             <input type="Submit" value=Cerrar>                    
             {%csrf_token%}  

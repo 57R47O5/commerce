@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {%block body%}        
-            <form action="{% url 'datosubasta' usuario_id%}" method="post">                
+            <form action="{% url 'datosubasta' usuario_id%}" method="post" enctype="multipart/form-data">                
                 {%csrf_token%}
                 {{subasta.as_p}}
                 <input type="submit">

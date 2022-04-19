@@ -4,22 +4,13 @@
     <h2>Subastas activas</h2>  
     {%for subasta in subastas%}
     <ul>
-        <li> 
-            {%if user.is_authenticated%}
-            <div>  
-                <a href="{% url 'ver_subasta' subasta.id %}">{{subasta.nombre_producto}}</a><br>
-                {{subasta.descripcion_producto}}<br>
-                {{subasta.imagen_producto}}<br>  
-                {{subasta.precio_inicial}}<br>           
-                </div>
-            {%else%}
+        <li>    
             <div>  
             <a href="{% url 'ver_subasta' subasta.id %}">{{subasta.nombre_producto}}</a><br>
             {{subasta.descripcion_producto}}<br>
-            {{subasta.imagen_producto}}<br>  
+            <img src="/media/{{subasta.imagen_producto}}" alt="{{subasta.nombre_producto}}" ><br>  
             {{subasta.precio_inicial}}<br>           
-            </div> 
-            {%endif%}
+            </div>             
         </li>
     </ul>
     {%empty%}
