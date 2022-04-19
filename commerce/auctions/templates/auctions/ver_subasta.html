@@ -58,7 +58,17 @@
         {{comentario.as_p}}       
         <input type="Submit" value="Publicar comentario">                       
     </form><br>    
-    {% endif %}    
+    {% endif %}   
+</div>
+<div>  
+    <h2>Comentarios</h2>   
+    <ol>
+        {%if a > 0 %}
+            {%for opinion in opiniones%}
+            <li>{{opinion}} </li>             
+            {%endfor%}
+        {%endif%}
+    </ol>
 </div>
 <div>
     {%block erroruser%}
@@ -66,10 +76,6 @@
     {%endblock%}
 </div>
 {%endblock%}
-<div>
-    {%block comentar%}
-    {%endblock %}
-</div>
 <div>
     {%block comentario%}
     {%endblock %}

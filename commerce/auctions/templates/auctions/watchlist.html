@@ -1,0 +1,10 @@
+{%extends "auctions/layout.html" %}
+{%block body%}
+<div>
+    <ul>
+    {%for subasta in subastas%}
+        <li><a href="{% url 'ver_subasta' subasta.id %}">{{subasta.nombre_producto}}</a> </li>
+    {% endfor %}
+    </ul>
+</div>
+{%endblock%}

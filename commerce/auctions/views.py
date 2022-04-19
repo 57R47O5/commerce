@@ -77,16 +77,21 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+def categorias(request):
+    categorias = Categoria.objects.all()    
+    contexto = {"categorias":categorias}
+    return render(request, "auctions/categorias.html", contexto)
+
 # Recibimos los datos que nos envía el form, y el id del usuario, creamos una nueva subasta y nos dirigimos a su página
 def dato_subasta(request, user_id):
     contexto = {"usuario_id":user_id, "view":"dato_subasta"}
     user = User.objects.get(pk=user_id)
     if request.method == "POST":
-        subasta = SubastaForm(request.POST)        
+        subasta = SubastaForm(request.POST, request.FILES)        
         if subasta.is_valid():                     
             tabla_subasta = subasta.cleaned_data
             subasta.save()                
-            subasta.ultimo_oferente = user  # Será que se puede asignar tan alegremente un objeto del lado derecho?
+            subasta.ultimo_oferente = user  
             subasta.save()                        
             contexto.update(tabla_subasta)
             contexto.update({"subastas":Subasta.objects.all()})
@@ -97,6 +102,14 @@ def dato_subasta(request, user_id):
         subasta = SubastaForm(initial={'creador_subasta':user_id, 'estatus':TRUE })                        
         contexto.update({"subasta": subasta})
         return render(request, "auctions/subasta.html", contexto)
+
+@login_required
+def watchlist(request, user_id):
+    #watchlists = Watchlist.objects.filter(usuario=user_id)      # Objeto queryset. Tenemos que sacar de aca un list de elementos subasta
+    #watchlists.save()    
+    subastas = Subasta.objects.filter(SubastaWatchlist__usuario=user_id)    
+    contexto=({"subastas":subastas})
+    return render(request, "auctions/watchlist.html", contexto)
 
 @login_required
 def agregar_watchlist(request, user_id):
@@ -131,6 +144,9 @@ def ver_subasta(request, subasta_id):
     s = Watchlist.objects.filter(usuario = id_usuario, subasta=subasta_id)
     c = s.count()                                  
     contexto.update({"c":c})
+    opiniones = Comentario.objects.filter(subasta=subasta_id)    
+    a = opiniones.count()                                  
+    contexto.update({"a":a, "opiniones":opiniones})
     comentario = ComentarioForm(initial={"usuario":id_usuario, "subasta":subasta_id})
     contexto.update({"comentario":comentario})
     return render(request, "auctions/ver_subasta.html", contexto)   
@@ -175,9 +191,14 @@ def comentar(request, subasta_id):
     if request.method == "POST":
         comentario = ComentarioForm(request.POST)
         if comentario.is_valid:
-            comentario.save()
-            contexto = {"comentario":comentario}
+            comentario.save()            
             return index(request)            
     else:
         comentario = ComentarioForm(initial={"usuario":user_id})
     return index(request)
+
+def categoria(request, categoria_id):
+    subastas = Subasta.objects.filter(categoria_producto_id=categoria_id)
+    bandera = subastas.count()
+    contexto = {"subastas":subastas, "bandera":bandera}
+    return render(request, "auctions/categoria.html", contexto)

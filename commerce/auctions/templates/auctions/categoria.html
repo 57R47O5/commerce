@@ -1,0 +1,17 @@
+{%extends "auctions/layout.html" %}
+
+{%block body%}
+<div>
+    {% if bandera > 0 %}
+    <ul>
+        {% for subasta in subastas %}
+        <li>
+            <a href="{% url 'ver_subasta' subasta.id%}">{{subasta}}</a>            
+        </li>
+        {%endfor%} 
+    </ul>
+    {% else %}
+    <h2>No hay productos en esta categoria</h2>
+    {%endif%}
+</div>
+{%endblock%}
